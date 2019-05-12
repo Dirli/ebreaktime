@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=EBreakTime
+GenericName=EBreak Time
+Comment=Manage your breaktime
+Categories=Utility;
+Exec=io.elementary.ebreaktime %U
+Icon=io.elementary.ebreaktime
+Terminal=false
+Type=Application
+Keywords=Time break;
+X-GNOME-Autostart-enabled=false
+X-GNOME-UsesNotifications=false

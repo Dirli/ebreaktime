@@ -12,3 +12,11 @@ configure_file(
     configuration: conf_data,
     install_dir: dep_dbus.get_pkgconfig_variable('session_bus_services_dir')
 )
+
+install_data(meson.project_name() + '.desktop',
+    install_dir: join_paths(get_option('datadir'), 'applications')
+)
+
+install_data(meson.project_name() + 'd.desktop',
+    install_dir: join_paths(get_option('datadir'), 'applications')
+)

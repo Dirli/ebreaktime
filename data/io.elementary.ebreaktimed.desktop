@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=EBreakTime daemon
+GenericName=EBreak Time daemon
+Comment=Manage your time daemon
+Categories=Utility;
+Exec=io.elementary.ekeeptimed %U
+Icon=io.elementary.ekeeptime
+Terminal=false
+Type=Application
+Keywords=Time break;
+X-GNOME-Autostart-enabled=true
+X-GNOME-UsesNotifications=true
+NoDisplay=true
