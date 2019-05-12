@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema path="/io/elementary/ebreaktime/" id="io.elementary.ebreaktime">
+        <key type="b" name="autostart">
+            <default>false</default>
+            <summary>Autostart</summary>
+            <description>Determines whether the application starts automatically</description>
+        </key>
+        <key type="b" name="break">
+            <default>true</default>
+            <summary>Break status</summary>
+            <description>Determines the status of the break.</description>
+        </key>
+        <key type="i" name="breaktime">
+            <default>15</default>
+            <summary>Break time value</summary>
+            <description>Break time value (min).</description>
+        </key>
+        <key type="i" name="worktime">
+            <default>45</default>
+            <summary>Work time value</summary>
+            <description>Work time value (min).</description>
+        </key>
+        <key type="b" name="postpone">
+            <default>true</default>
+            <summary>Postpone status</summary>
+            <description>Determines whether a break is allowed to be postponed.</description>
+        </key>
+    </schema>
+</schemalist>
