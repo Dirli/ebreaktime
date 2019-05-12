@@ -29,6 +29,11 @@ if get_option('notify')
     vala_args += ['--define=NOTIFY_ENABLE']
 endif
 
+if get_option('indicator')
+    wingpanel_dep = dependency('wingpanel-2.0')
+    vala_args += ['--define=INDICATOR_EXIST']
+endif
+
 m_dep = meson.get_compiler('c').find_library('m', required : false)
 
 subdir('data')

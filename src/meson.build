@@ -1,5 +1,9 @@
 subdir('Common')
 subdir('Core')
+if get_option('indicator')
+    subdir('Indicator')
+endif
+
 
 executable(
     meson.project_name(),

@@ -16,6 +16,11 @@
             <summary>Break time value</summary>
             <description>Break time value (min).</description>
         </key>
+        <key type="b" name="indicator">
+            <default>true</default>
+            <summary>Indicatork status</summary>
+            <description>Management of indicator activity</description>
+        </key>
         <key type="i" name="worktime">
             <default>45</default>
             <summary>Work time value</summary>

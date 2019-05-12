@@ -8,10 +8,23 @@ namespace EBreakTime {
             var autostart_switch = new Gtk.Switch ();
             autostart_switch.halign = Gtk.Align.END;
 
-            settings.bind ("autostart", autostart_switch, "active", GLib.SettingsBindFlags.GET_NO_CHANGES);
+            settings.bind ("autostart", autostart_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
             attach (autostart_label,  0, 0);
             attach (autostart_switch, 1, 0);
+
+#if INDICATOR_EXIST
+            var indicator_label = new Gtk.Label (_("Indicator"));
+            indicator_label.halign = Gtk.Align.START;
+            indicator_label.expand = true;
+            var indicator_switch = new Gtk.Switch ();
+            indicator_switch.halign = Gtk.Align.END;
+
+            settings.bind ("indicator", indicator_switch, "active", SettingsBindFlags.DEFAULT);
+
+            attach (indicator_label,  0, 1);
+            attach (indicator_switch, 1, 1);
+#endif
         }
     }
 }
