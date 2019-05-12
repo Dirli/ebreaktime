@@ -80,10 +80,10 @@ namespace EBreakTime.Core {
             );
 
             if (settings.get_boolean ("autostart")) {
-                var desktop_file_path = new GLib.DesktopAppInfo (Constants.DAEMON_FILE_NAME).filename;
-                var desktop_file = File.new_for_path (desktop_file_path);
+                var desktop_file_path = new GLib.DesktopAppInfo ("io.elementary.ebreaktimed.desktop").filename;
+                var desktop_file = GLib.File.new_for_path (desktop_file_path);
 
-                var dest_file = File.new_for_path (dest_path);
+                var dest_file = GLib.File.new_for_path (dest_path);
 
                 try {
                     desktop_file.copy (dest_file, FileCopyFlags.OVERWRITE);

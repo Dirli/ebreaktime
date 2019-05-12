@@ -20,10 +20,6 @@ namespace EBreakTime {
 
             set_titlebar (header_bar);
 
-            /* view = new Gtk.Grid ();
-            view.expand = true;
-            view.halign = view.valign = Gtk.Align.FILL; */
-
             var settings_widget = new Widgets.Settings (settings);
             settings_widget.valign = Gtk.Align.CENTER;
             var break_widget = new Widgets.Break (settings);
@@ -51,8 +47,6 @@ namespace EBreakTime {
             view_box.margin = 10;
             view_box.pack_start (settings_widget, true, true, 0);
             view_box.pack_start (break_widget, true, true, 0);
-
-            /* view.attach (col_1, 0, 0); */
 
             add (view_box);
         }

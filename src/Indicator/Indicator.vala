@@ -13,12 +13,18 @@ namespace EBreakTime {
 
             settings = SettingsManager.get_default ();
 
-            GLib.Bus.watch_name (GLib.BusType.SESSION,
-                                 Constants.DBUS_NAME,
-                                 GLib.BusNameWatcherFlags.NONE,
-                                 () => {
-                                     on_changed_indicator ();
-                                 });
+            GLib.Bus.watch_name (
+                GLib.BusType.SESSION,
+                Constants.DBUS_NAME,
+                GLib.BusNameWatcherFlags.NONE,
+                () => {
+                    on_changed_indicator ();
+                },
+                () => {
+                    break_time = null;
+                    visible = false;
+                }
+            );
 
             settings.changed["break"].connect (on_changed_indicator);
             settings.changed["indicator"].connect (on_changed_indicator);
