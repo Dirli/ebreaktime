@@ -11,7 +11,7 @@ if get_option('notify')
 endif
 
 executable(
-    meson.project_name() + '-daemon',
+    meson.project_name() + 'd',
     'BreakManager.vala',
     'BreakWidget.vala',
     'Daemon.vala',

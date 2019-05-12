@@ -4,9 +4,17 @@ project(
     version: '0.3.0'
 )
 
+gnome = import('gnome')
+
 add_global_arguments(
     '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()),
     language:'c'
+)
+
+asresources = gnome.compile_resources(
+    'as-resources', join_paths('data', meson.project_name() + '.gresource.xml'),
+    source_dir: 'data',
+    c_name: 'as'
 )
 
 dep_gtk3 = dependency('gtk+-3.0')
