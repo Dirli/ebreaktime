@@ -28,7 +28,7 @@ namespace EBreakTime {
             margin_top = 15;
             row_spacing = 10;
 
-            var breaktime_lbl = new Gtk.Label (_("Time to break:"));
+            var breaktime_lbl = new Gtk.Label (_("Before the break:"));
             breaktime_lbl.expand = true;
             breaktime_lbl.halign = Gtk.Align.START;
             breaktime_val = new Gtk.Label ("Off");

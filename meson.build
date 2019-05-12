@@ -5,6 +5,7 @@ project(
 )
 
 gnome = import('gnome')
+i18n = import('i18n')
 
 add_global_arguments(
     '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()),
@@ -38,5 +39,6 @@ m_dep = meson.get_compiler('c').find_library('m', required : false)
 
 subdir('data')
 subdir('src')
+subdir('po')
 
 meson.add_install_script('meson/meson_post_install.py')
