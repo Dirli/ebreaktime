@@ -3,7 +3,7 @@
 The application monitors the duration of the time spent for the PC. Periodically reminds you of the need to rest.
 
 Features:
-* ability to add to startup
+* ability to add to autoload
 * indicator visibility control
 * opportunity to postpone the break
 
