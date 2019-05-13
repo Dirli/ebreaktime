@@ -3,7 +3,7 @@
 import os
 import subprocess
 
-prefix = os.environ.get('MESON_INSTALL_PREFIX', '/usr/local')
+prefix = os.environ.get('MESON_INSTALL_PREFIX', '/usr')
 datadir = os.path.join(prefix, 'share')
 
 # Packaging tools define DESTDIR and this isn't needed for them
@@ -16,4 +16,3 @@ if 'DESTDIR' not in os.environ:
 
     print('Updating desktop database...')
     subprocess.call(['update-desktop-database', '-q', os.path.join(datadir, 'applications')])
-
