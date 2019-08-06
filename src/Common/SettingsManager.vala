@@ -19,7 +19,7 @@
 public class EBreakTime.SettingsManager : GLib.Settings {
     private static SettingsManager? instance = null;
 
-    public SettingsManager () {
+    private SettingsManager () {
         Object (schema_id: "io.elementary.ebreaktime");
     }
 
