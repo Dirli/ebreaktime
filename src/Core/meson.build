@@ -3,6 +3,8 @@ core_deps = [
     dep_gobject,
     dep_gio_unix,
     dep_gtk3,
+    dep_gdk,
+    dep_libxss,
     m_dep
 ]
 

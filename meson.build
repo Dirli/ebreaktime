@@ -12,6 +12,12 @@ add_global_arguments(
     language:'c'
 )
 
+add_project_arguments ([
+        '--vapidir', join_paths (meson.current_source_dir (), 'vapi'),
+    ],
+    language: 'vala'
+)
+
 asresources = gnome.compile_resources(
     'as-resources', join_paths('data', meson.project_name() + '.gresource.xml'),
     source_dir: 'data',
@@ -23,6 +29,8 @@ dep_glib = dependency('glib-2.0')
 dep_gio_unix = dependency('gio-unix-2.0')
 dep_gobject = dependency('gobject-2.0')
 dep_dbus = dependency('dbus-1')
+dep_gdk = dependency('gdk-x11-3.0')
+dep_libxss = dependency('xscrnsaver')
 
 vala_args = []
 if get_option('notify')

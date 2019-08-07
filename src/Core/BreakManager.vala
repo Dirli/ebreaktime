@@ -31,7 +31,6 @@ namespace EBreakTime {
         public signal void run_break (bool break_state);
 
         private bool postpone_flag = false;
-        private bool check_idle;
 
         private int _break_time;
         public int break_time {
@@ -63,8 +62,6 @@ namespace EBreakTime {
 
             this.work_time = counter = work_time;
             this.break_time = break_time;
-
-            check_idle = FileUtils.test("/usr/bin/xprintidle", FileTest.IS_EXECUTABLE);
 
             try {
                 logind_manager = GLib.Bus.get_proxy_sync (BusType.SYSTEM,
@@ -134,22 +131,21 @@ namespace EBreakTime {
             emit_changed_count ();
             --counter;
 
-            if (check_idle && counter % 5 == 0 && timer_state == "work") {
-                string ls_stdout;
-
-                try {
-                    GLib.Process.spawn_command_line_sync ("xprintidle", out ls_stdout, null, null);
-
-                    if (int.parse(ls_stdout) > 600000) {
-                        timer_state = "work";
-                    }
-
-                } catch (SpawnError e) {
-                    warning ("Error: %s\n", e.message);
+            if (counter % 5 == 0 && timer_state == "work") {
+                var cur_idle = get_idle ();
+                if (cur_idle > 600000) {
+                    timer_state = "work";
                 }
             }
 
             return true;
+        }
+
+        public ulong get_idle () {
+            unowned X.Display x_display = Gdk.X11.get_default_xdisplay ();
+            var scrsaver = XScreenSaver.query_info (x_display, x_display.default_root_window ());
+
+            return scrsaver.idle;
         }
 
         public void emit_changed_count (int? inc = 0) {
