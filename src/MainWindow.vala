@@ -22,7 +22,7 @@ namespace EBreakTime {
 
         public MainWindow (EBreakTimeApp app) {
             set_application (app);
-            resizable = false;
+            set_default_size (900, 450);
             window_position = Gtk.WindowPosition.CENTER;
             margin = 10;
 
@@ -41,6 +41,12 @@ namespace EBreakTime {
             var settings_widget = new Widgets.Settings (settings);
             settings_widget.valign = Gtk.Align.CENTER;
             var break_widget = new Widgets.Break (settings);
+
+            var main_widget = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
+            main_widget.position = 200;
+
+            var stack = new Gtk.Stack ();
+            stack.add_titled (break_widget, "break", _("Break time"));
 
             try {
                 break_time = GLib.Bus.get_proxy_sync (GLib.BusType.SESSION, Constants.DBUS_NAME, Constants.DBUS_PATH);
@@ -61,12 +67,21 @@ namespace EBreakTime {
                 warning ("Error: %s\n", e.message);
             }
 
-            var view_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            view_box.margin = 10;
-            view_box.pack_start (settings_widget, true, true, 0);
-            view_box.pack_start (break_widget, true, true, 0);
+            var break_item = new Widgets.ServiceItem ("preferences-system-time", "break", _("Break time"));
 
-            add (view_box);
+            var service_list = new Gtk.ListBox ();
+            service_list.activate_on_single_click = true;
+            service_list.selection_mode = Gtk.SelectionMode.SINGLE;
+            service_list.add (break_item);
+
+            service_list.row_selected.connect ((row) => {
+                stack.visible_child_name = ((Widgets.ServiceItem) row).title;
+            });
+
+            main_widget.add1 (service_list);
+            main_widget.add2 (stack);
+
+            add (main_widget);
         }
     }
 }

@@ -11,6 +11,7 @@ executable(
     'MainWindow.vala',
     'Widgets/Break.vala',
     'Widgets/CustomGrid.vala',
+    'Widgets/ServiceItem.vala',
     'Widgets/Settings.vala',
     client_files,
     asresources,
@@ -18,7 +19,8 @@ executable(
     dependencies: [
         dep_gtk3,
         dep_glib,
-        dep_gobject
+        dep_gobject,
+        dep_granite
     ],
     install : true
 )

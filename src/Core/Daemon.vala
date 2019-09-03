@@ -56,10 +56,10 @@ namespace EBreakTime.Core {
             GLib.Application.get_default ().release ();
         }
 
-        public static void main (string [] args) {
+        public static int main (string [] args) {
             GLib.Process.signal (GLib.ProcessSignal.INT, on_exit);
             GLib.Process.signal (GLib.ProcessSignal.TERM, on_exit);
-            Daemon.get_instance ().run ();
+            return Daemon.get_instance ().run (args);
         }
     }
 }
