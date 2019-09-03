@@ -18,6 +18,7 @@ executable(
     'BreakWidget.vala',
     'Daemon.vala',
     'DBusService.vala',
+    'Timer.vala',
     core_files,
     vala_args: vala_args,
     dependencies: core_deps,

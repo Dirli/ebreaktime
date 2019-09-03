@@ -29,6 +29,7 @@ namespace EBreakTime {
 
         public signal void changed_count (string cur_val);
         public signal void run_break (bool break_state);
+        public signal void bump_timer (int _interval);
 
         private bool postpone_flag = false;
 
@@ -49,11 +50,25 @@ namespace EBreakTime {
             get {return _timer_state;}
             set {
                 _timer_state = value;
-                start_timer ();
+                interval = 60;
+
+                bump_timer (0);
+
+                if (value == "break") {
+                    interval = 1;
+                    counter = 60 * break_time;
+                } else {
+                    counter = postpone_flag ? postpone : work_time;
+                    postpone_flag = false;
+                }
+
+                if (counter < 1) {return;}
+
+                timer_handler ();
+                bump_timer (interval);
             }
         }
 
-        private uint source_id;
         private ILogindManager? logind_manager;
 
         public BreakManager (int work_time, int break_time) {
@@ -87,37 +102,12 @@ namespace EBreakTime {
             timer_state = "work";
         }
 
-        private void start_timer () {
-            stop_timer ();
-            interval = 60;
-
-            if (timer_state == "break") {
-                interval = 1;
-                counter = 60 * break_time;
-            } else {
-                counter = postpone_flag ? postpone : work_time;
-                postpone_flag = false;
-            }
-
-            if (counter < 1) {return;}
-
-            timer_handler ();
-            source_id = GLib.Timeout.add_seconds (interval, timer_handler);
-        }
-
-        public void stop_timer () {
-            counter = this.work_time;
-            if (source_id > 0) {
-                GLib.Source.remove(source_id);
-            }
-        }
-
         private void emit_break_signal () {
             bool run_break_state = timer_state == "break" ? false : true;
             run_break (run_break_state);
         }
 
-        private bool timer_handler () {
+        public bool timer_handler () {
             if (counter == 0) {
                 emit_break_signal ();
                 timer_state = timer_state == "break" ? "work" : "break";

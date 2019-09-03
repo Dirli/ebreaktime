@@ -27,6 +27,7 @@ namespace EBreakTime.Core {
         public signal void changed_break (string new_val);
 
         private BreakManager break_manager;
+        private TimerManager timer_manager;
         private BreakWidget? break_widget = null;
         private EBreakTime.SettingsManager settings;
 
@@ -43,15 +44,26 @@ namespace EBreakTime.Core {
             settings = EBreakTime.SettingsManager.get_default ();
             settings.set_boolean ("autostart", checked_autostart ());
 
+            timer_manager = TimerManager.get_default ();
+            timer_manager.emit_time.connect (on_emit_time);
+
             break_manager = new BreakManager (settings.get_int ("worktime"), settings.get_int ("breaktime"));
             break_manager.changed_count.connect (on_changed_count);
             break_manager.run_break.connect (on_run_break);
+            break_manager.bump_timer.connect ((interval) => {
+                timer_manager.start_timer (interval);
+            });
 
             init_settings_signals ();
 
             if (settings.get_boolean ("break")) {
                 break_manager.init ();
             }
+        }
+
+        private bool on_emit_time () {
+            break_manager.timer_handler ();
+            return true;
         }
 
         public void break_manage (string? action = "") throws GLib.DBusError, GLib.IOError {
@@ -83,7 +95,8 @@ namespace EBreakTime.Core {
                 if (settings.get_boolean ("break")) {
                     break_manager.init ();
                 } else {
-                    break_manager.stop_timer ();
+                    timer_manager.start_timer (0);
+                    // break_manager.stop_timer ();
                     changed_break ("Off");
                 }
             });
