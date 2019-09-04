@@ -1,5 +1,6 @@
 common_files_minimal = files(
     'Constants.vala',
+    'PAM.vala',
     'SettingsManager.vala',
 )
 
