@@ -32,6 +32,7 @@ dep_dbus = dependency('dbus-1')
 dep_gdk = dependency('gdk-x11-3.0')
 dep_libxss = dependency('xscrnsaver')
 dep_granite = dependency('granite')
+dep_gee = dependency ('gee-0.8')
 
 vala_args = []
 if get_option('notify')

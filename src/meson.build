@@ -21,7 +21,9 @@ executable(
         dep_gtk3,
         dep_glib,
         dep_gobject,
-        dep_granite
+        dep_granite,
+        dep_gee,
+        meson.get_compiler('vala').find_library('posix')
     ],
     install : true
 )

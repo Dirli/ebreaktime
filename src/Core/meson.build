@@ -4,6 +4,7 @@ core_deps = [
     dep_gio_unix,
     dep_gtk3,
     dep_gdk,
+    dep_gee,
     dep_libxss,
     m_dep
 ]

@@ -24,4 +24,6 @@ namespace Constants {
     public const string DAEMON_FILE_NAME = "io.elementary.ebreaktimed.desktop";
     public const string DESKTOP_FILE_NAME = "io.elementary.ebreaktime.desktop";
     public const string PAM_TIME_CONF_PATH = "/etc/security/time.conf";
+    public const string PAM_CONF_START = "## BREAK_TIME_START";
+    public const string PAM_CONF_END = "## BREAK_TIME_END";
 }

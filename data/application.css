@@ -1,8 +1,3 @@
-.block {
-    border: 1px solid;
-    border-radius: 1em;
-    padding: 1.5em;
-}
-.block-head {
-    font-size: 120%;
+.exist-restrict {
+    background-color: LightSeaGreen;
 }

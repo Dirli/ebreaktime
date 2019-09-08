@@ -5,6 +5,8 @@ namespace EBreakTime {
         private Granite.Widgets.TimePicker picker_to;
         private string day_type;
 
+        private Gtk.Label label;
+
         public WeekSpinBox (string title, PAM.DayType day_type, Gtk.SizeGroup size_group) {
             orientation = Gtk.Orientation.HORIZONTAL;
             spacing = 12;
@@ -18,8 +20,7 @@ namespace EBreakTime {
             picker_to = new Granite.Widgets.TimePicker ();
             picker_to.time_changed.connect (on_picker_changed);
 
-            var label = new Gtk.Label (title);
-            label.get_style_context ().add_class ("h4");
+            label = new Gtk.Label (title);
             size_group.add_widget (label);
 
             add (label);
@@ -32,9 +33,12 @@ namespace EBreakTime {
         private void on_picker_changed () {
             var time_from = get_from ();
             var time_to = get_to ();
-            // var t_limits = time_from == time_to ? null : (time_from + time_to);
 
-            changed (day_type, time_from == time_to ? null : (time_from + time_to));
+            changed (day_type, time_from == time_to ? null : (time_from + "-" + time_to));
+        }
+
+        public void highlight_restriction () {
+            label.get_style_context ().add_class ("exist-restrict");
         }
 
         public string get_from () {

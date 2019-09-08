@@ -1,8 +1,7 @@
 namespace EBreakTime {
     public class Widgets.Access : Granite.SimpleSettingsPage {
-        private Gtk.ComboBoxText limit_combobox;
-
         private Gee.HashMap<string, string> access_map;
+        private Gee.HashMap<PAM.DayType, string> names_map;
         private Gtk.SizeGroup title_group;
 
         public Access () {
@@ -11,22 +10,25 @@ namespace EBreakTime {
                     icon_name: "preferences-system-privacy",
                     title: _("Access time"));
 
-            access_map = new Gee.HashMap<string, string> ();
+            names_map = new Gee.HashMap<PAM.DayType, string> ();
+            names_map[PAM.DayType.ALL] = _("All days");
+            names_map[PAM.DayType.WEEKDAY] = _("Weekdays");
+            names_map[PAM.DayType.WEEKEND] = _("Weekends");
+            names_map[PAM.DayType.MONDAY] = _("Monday");
+            names_map[PAM.DayType.TUESDAY] = _("Tuesday");
+            names_map[PAM.DayType.WEDNESDAY] = _("Wednesday");
+            names_map[PAM.DayType.THURSDAY] = _("Thursday");
+            names_map[PAM.DayType.FRIDAY] = _("Friday");
+            names_map[PAM.DayType.SATURDAY] = _("Saturday");
+            names_map[PAM.DayType.SUNDAY] = _("Sunday");
 
-            limit_combobox = new Gtk.ComboBoxText ();
-            limit_combobox.hexpand = false;
-            limit_combobox.append (PAM.DayType.ALL.to_string (), _("On weekdays and weekends"));
-            limit_combobox.append (PAM.DayType.WEEKDAY.to_string (), _("Only on weekdays"));
-            limit_combobox.append (PAM.DayType.WEEKEND.to_string (), _("Only on weekends"));
-            limit_combobox.active = 0;
-            limit_combobox.changed.connect (on_limit_combobox_changed);
+            access_map = new Gee.HashMap<string, string> ();
 
             title_group = new Gtk.SizeGroup (Gtk.SizeGroupMode.HORIZONTAL);
 
             content_area.column_spacing = content_area.row_spacing = 12;
-            content_area.margin_top = 60;
+            content_area.margin_top = 20;
             content_area.halign = Gtk.Align.CENTER;
-            content_area.attach (limit_combobox, 0, 0);
 
             var upd_button = new Gtk.Button.with_label (_("Update limits"));
             upd_button.clicked.connect (update_pam);
@@ -34,12 +36,27 @@ namespace EBreakTime {
             action_area.halign = Gtk.Align.CENTER;
             action_area.add (upd_button);
 
-            on_limit_combobox_changed ();
+            load_restrictions ();
+        }
+
+        private void load_restrictions () {
+            var token = PAM.Token.get_token_for_user (Posix.getlogin ());
+
+            if (token != null) {
+                access_map = token.get_times_info ();
+            }
+
+            add_frame (create_frame_box ());
         }
 
         public void update_pam () {
             if (access_map.size > 0) {
-                //
+                string[] new_restrictions = {};
+                access_map.foreach ((entry) => {
+                    new_restrictions += (entry.key + entry.value);
+                    return true;
+                });
+                PAM.Token.set_token_for_user (Posix.getlogin (), new_restrictions);
             }
         }
 
@@ -52,7 +69,7 @@ namespace EBreakTime {
         }
 
         private void add_frame (Gtk.Box frame_box) {
-            var exist_widget = content_area.get_child_at (0, 1);
+            var exist_widget = content_area.get_child_at (0, 0);
             if (exist_widget != null) {
                 exist_widget.destroy ();
             }
@@ -61,37 +78,37 @@ namespace EBreakTime {
             frame.get_style_context ().add_class (Gtk.STYLE_CLASS_VIEW);
             frame.add (frame_box);
 
-            content_area.attach (frame, 0, 1);
+            content_area.attach (frame, 0, 0);
             content_area.show_all ();
         }
 
-        private Gtk.Box create_frame_box (PAM.DayType id) {
+        private Gtk.Box create_frame_box () {
             var frame_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 
-            if (id == PAM.DayType.WEEKDAY || id == PAM.DayType.ALL) {
-                var weekday_box = new WeekSpinBox (_("Weekdays"), id, title_group);
-                weekday_box.changed.connect (on_changed_box);
-                frame_box.add (weekday_box);
-            }
+            frame_box.add (get_iter_box (PAM.DayType.ALL));
+            frame_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
+            frame_box.add (get_iter_box (PAM.DayType.WEEKDAY));
+            frame_box.add (get_iter_box (PAM.DayType.WEEKEND));
+            frame_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
 
-            if (id == PAM.DayType.ALL) {
-                frame_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
-            }
-
-            if (id == PAM.DayType.WEEKEND || id == PAM.DayType.ALL) {
-                var weekend_box = new WeekSpinBox (_("Weekends"), id, title_group);
-                weekend_box.changed.connect (on_changed_box);
-                frame_box.add (weekend_box);
+            foreach (var day_type in PAM.DayType.get_days ()) {
+                frame_box.add (get_iter_box (day_type));
             }
 
             return frame_box;
         }
 
-        private void on_limit_combobox_changed () {
-            access_map.clear ();
-            string id = limit_combobox.get_active_id ();
+        private WeekSpinBox get_iter_box (PAM.DayType day_type) {
+            var iter_box = new WeekSpinBox (names_map[day_type], day_type, title_group);
+            if (access_map.has_key (day_type.to_string ())) {
+                string[] bounds = access_map[day_type.to_string ()].split ("-");
+                iter_box.set_from (bounds[0]);
+                iter_box.set_to (bounds[1]);
+                iter_box.highlight_restriction ();
+            }
 
-            add_frame (create_frame_box (PAM.DayType.to_enum (id)));
+            iter_box.changed.connect (on_changed_box);
+            return iter_box;
         }
     }
 }
