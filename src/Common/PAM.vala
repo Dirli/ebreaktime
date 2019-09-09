@@ -84,6 +84,55 @@ namespace EBreakTime.PAM {
         public string[] users;
         public string[] times;
 
+        public static bool get_pam_state () {
+            string[] paths = {"/etc/pam.d/lightdm",  "/etc/pam.d/login"};
+
+            foreach (var path in paths) {
+                string contents;
+                try {
+                    FileUtils.get_contents (path, out contents);
+                    string conf_line = "\naccount required pam_time.so";
+                    if (!(conf_line in contents)) {return false;}
+                } catch (FileError e) {
+                    warning (e.message);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static void switch_pam (bool pam_state) {
+            string[] paths = {"/etc/pam.d/lightdm",  "/etc/pam.d/login"};
+
+            foreach (var path in paths) {
+                string contents;
+                try {
+                    FileUtils.get_contents (path, out contents);
+                    string conf_line = "\naccount required pam_time.so";
+                    if (pam_state && conf_line in contents) {return;}
+                    if (!pam_state && !(conf_line in contents)) {return;}
+
+                    string new_content = "";
+                    if (pam_state) {
+                        new_content = contents;
+                        new_content += conf_line;
+                    } else {
+                        foreach (var str in contents.split ("\n")) {
+                            if (str == "" || str == "account required pam_time.so") {continue;}
+                            new_content += str;
+                            new_content += "\n";
+                        }
+                    }
+
+                    FileUtils.set_contents ("/home/dirli/test2", new_content);
+                } catch (FileError e) {
+                    warning (e.message);
+                    return;
+                }
+            }
+        }
+
         public static void set_token_for_user (string username, string[]? new_restrictions = null) {
             string contents;
             string new_content = "";

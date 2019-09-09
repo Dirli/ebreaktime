@@ -10,6 +10,16 @@ namespace EBreakTime {
                     icon_name: "preferences-system-privacy",
                     title: _("Access time"));
 
+            status_switch.notify["active"].connect (() => {
+                PAM.Token.switch_pam (status_switch.active);
+                content_area.sensitive = status_switch.active;
+                action_area.sensitive = status_switch.active;
+            });
+
+            status_switch.active = PAM.Token.get_pam_state ();
+            content_area.sensitive = status_switch.active;
+            action_area.sensitive = status_switch.active;
+
             names_map = new Gee.HashMap<PAM.DayType, string> ();
             names_map[PAM.DayType.ALL] = _("All days");
             names_map[PAM.DayType.WEEKDAY] = _("Weekdays");
