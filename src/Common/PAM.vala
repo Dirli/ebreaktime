@@ -89,9 +89,14 @@ namespace EBreakTime.PAM {
             string new_content = "";
             try {
                 FileUtils.get_contents (Constants.PAM_TIME_CONF_PATH, out contents);
-                bool first_record = (contents.index_of (Constants.PAM_CONF_START) == -1);
-                string times_str = string.joinv (LIST_SEPARATOR, new_restrictions);
-                string new_restrictions_str = "*;*;%s;%s".printf (username, times_str);
+
+                bool first_record = false;
+                string new_restrictions_str = "";
+                if (new_restrictions != null) {
+                    first_record = (contents.index_of (Constants.PAM_CONF_START) == -1);
+                    string times_str = string.joinv (LIST_SEPARATOR, new_restrictions);
+                    new_restrictions_str = "*;*;%s;%s".printf (username, times_str);
+                }
 
                 if (first_record) {
                     new_content = contents;
@@ -103,14 +108,19 @@ namespace EBreakTime.PAM {
 
                     foreach (var str in contents.split ("\n")) {
                         if (str == "") {continue;}
-                        if (str == Constants.PAM_CONF_END) {parse = false;}
+
+                        if (str == Constants.PAM_CONF_END) {
+                            if (new_restrictions != null) {
+                                new_content += new_restrictions_str;
+                                new_content += "\n";
+                            }
+                            parse = false;
+                        }
+
                         if (parse) {
                             var token = parse_line (str);
                             if (token != null && token.get_user_arg0 () == username) {
-                                if (new_restrictions == null) {
-                                    continue;
-                                }
-                                str = new_restrictions_str;
+                                continue;
                             }
                         }
                         if (str == Constants.PAM_CONF_START) {parse = true;}

@@ -34,10 +34,18 @@ namespace EBreakTime {
             upd_button.clicked.connect (update_pam);
 
             var restore_button = new Gtk.Button.with_label (_("Restore limits"));
-            restore_button.tooltip_text =_("All unsaved changes will be discarded")
+            restore_button.tooltip_text =_("All unsaved changes will be discarded");
             restore_button.clicked.connect (load_restrictions);
 
+            var clear_button = new Gtk.Button.with_label (_("Clear limits"));
+            clear_button.tooltip_text =_("All your limits will be deleted");
+            clear_button.clicked.connect (() => {
+                PAM.Token.set_token_for_user (Posix.getlogin ());
+                load_restrictions ();
+            });
+
             action_area.halign = Gtk.Align.CENTER;
+            action_area.add (clear_button);
             action_area.add (restore_button);
             action_area.add (upd_button);
 
@@ -45,6 +53,7 @@ namespace EBreakTime {
         }
 
         private void load_restrictions () {
+            access_map.clear ();
             var token = PAM.Token.get_token_for_user (Posix.getlogin ());
 
             if (token != null) {
