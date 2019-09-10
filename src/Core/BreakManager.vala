@@ -115,7 +115,7 @@ namespace EBreakTime {
             }
 
             if (counter == 5 && timer_state == "work") {
-                EBreakTime.Utils.show_notify (_("5 minutes before the break"));
+                Core.Utils.show_notify (_("5 minutes before the break"));
             }
 
             emit_changed_count ();

@@ -20,7 +20,8 @@ executable(
     'Daemon.vala',
     'DBusService.vala',
     'Timer.vala',
-    core_files,
+    'Utils.vala',
+    common_files,
     vala_args: vala_args,
     dependencies: core_deps,
     install : true

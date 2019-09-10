@@ -15,6 +15,11 @@ install_data(meson.project_name() + '.gschema.xml',
     install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 
+install_data(meson.project_name() + '.policy',
+    install_mode: 'rw-r--r--',
+    install_dir: join_paths(get_option('datadir'), 'polkit-1', 'actions')
+)
+
 configure_file(
     input: meson.project_name() + '.service.in',
     output: '@BASENAME@',

@@ -14,7 +14,7 @@ executable(
     'Widgets/CustomGrid.vala',
     'Widgets/ServiceItem.vala',
     'Widgets/WeekSpinBox.vala',
-    client_files,
+    ex_client_files,
     asresources,
     vala_args: vala_args,
     dependencies: [
@@ -23,6 +23,7 @@ executable(
         dep_gobject,
         dep_granite,
         dep_gee,
+        dep_polkit,
         meson.get_compiler('vala').find_library('posix')
     ],
     install : true

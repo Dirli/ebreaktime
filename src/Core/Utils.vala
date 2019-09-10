@@ -16,15 +16,24 @@
  *
  */
 
-namespace Constants {
-    public const string DBUS_NAME = "io.elementary.EBreakTime";
-    public const string DBUS_PATH = "/io/elementary/ebreaktime";
-    public const string LOGIN1_DBUS_NAME = "org.freedesktop.login1";
-    public const string LOGIN1_DBUS_PATH = "/org/freedesktop/login1";
-    public const string DAEMON_FILE_NAME = "io.elementary.ebreaktimed.desktop";
-    public const string DESKTOP_FILE_NAME = "io.elementary.ebreaktime.desktop";
-    public const string PAM_TIME_CONF_PATH = "/etc/security/time.conf";
-    public const string PAM_CONF_START = "## BREAK_TIME_START";
-    public const string PAM_CONF_END = "## BREAK_TIME_END";
-    public const string LIST_SEPARATOR = "|";
+namespace EBreakTime.Core {
+    public class Utils {
+        public static void show_notify (string body, string? summary = null) {
+#if NOTIFY_ENABLE
+            if (summary == null) {
+                summary = _("Time break");
+            }
+            string icon = "tools-timer-symbolic";
+
+            Notify.init ("EBreakTime");
+
+            try {
+                Notify.Notification notification = new Notify.Notification (summary, body, icon);
+                notification.show ();
+            } catch (Error e) {
+                warning ("Error: %s", e.message);
+            }
+#endif
+        }
+    }
 }

@@ -27,12 +27,15 @@ asresources = gnome.compile_resources(
 dep_gtk3 = dependency('gtk+-3.0')
 dep_glib = dependency('glib-2.0')
 dep_gio_unix = dependency('gio-unix-2.0')
+dep_gio = dependency('gio-2.0')
 dep_gobject = dependency('gobject-2.0')
 dep_dbus = dependency('dbus-1')
 dep_gdk = dependency('gdk-x11-3.0')
 dep_libxss = dependency('xscrnsaver')
 dep_granite = dependency('granite')
 dep_gee = dependency ('gee-0.8')
+dep_polkit = dependency('polkit-gobject-1')
+dep_posix = meson.get_compiler('vala').find_library('posix')
 
 vala_args = []
 if get_option('notify')
@@ -49,6 +52,7 @@ m_dep = meson.get_compiler('c').find_library('m', required : false)
 
 subdir('data')
 subdir('src')
+subdir('cli')
 subdir('po')
 
 meson.add_install_script('meson/meson_post_install.py')

@@ -40,8 +40,22 @@ namespace EBreakTime {
             // var settings_widget = new Widgets.Settings (settings);
             // settings_widget.valign = Gtk.Align.CENTER;
 
+            var permission = Utils.get_permission ();
+
+            var infobar = new Gtk.InfoBar ();
+            infobar.message_type = Gtk.MessageType.INFO;
+
+            var lock_button = new Gtk.LockButton (permission);
+
+            var area = infobar.get_action_area () as Gtk.Container;
+            area.add (lock_button);
+
+            var content = infobar.get_content_area ();
+            content.add (new Gtk.Label (_("Some settings require administrator rights to be changed")));
+
             var break_widget = new Widgets.Break (settings);
             var access_widget = new Widgets.Access ();
+            access_widget.status_switch_state = permission.allowed;
 
             var main_widget = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
             main_widget.position = 200;
@@ -77,15 +91,28 @@ namespace EBreakTime {
             service_list.selection_mode = Gtk.SelectionMode.SINGLE;
             service_list.add (access_item);
             service_list.add (break_item);
-
             service_list.row_selected.connect ((row) => {
                 stack.visible_child_name = ((Widgets.ServiceItem) row).title;
+            });
+
+            stack.notify["visible-child-name"].connect (() => {
+                infobar.visible = (permission.allowed == false && stack.visible_child_name == "access");
             });
 
             main_widget.add1 (service_list);
             main_widget.add2 (stack);
 
-            add (main_widget);
+            var main_grid = new Gtk.Grid ();
+            main_grid.attach (infobar, 0, 0);
+            main_grid.attach (main_widget, 0, 1);
+            main_grid.show_all ();
+
+            permission.notify["allowed"].connect (() => {
+                infobar.visible = !permission.allowed;
+                access_widget.status_switch_state = permission.allowed;
+            });
+
+            add (main_grid);
         }
     }
 }

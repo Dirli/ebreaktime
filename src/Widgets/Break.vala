@@ -31,7 +31,7 @@ namespace EBreakTime {
             status_switch.notify["active"].connect (() => {
                 content_area.sensitive = status_switch.active;
             });
-            status_switch.active = settings.get_boolean ("break");
+            // status_switch.active = settings.get_boolean ("break");
 
             var breaktime_lbl = new Gtk.Label (_("Before the break:"));
             breaktime_lbl.halign = Gtk.Align.END;

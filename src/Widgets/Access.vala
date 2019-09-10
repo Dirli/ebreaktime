@@ -4,21 +4,23 @@ namespace EBreakTime {
         private Gee.HashMap<PAM.DayType, string> names_map;
         private Gtk.SizeGroup title_group;
 
+        public bool status_switch_state {
+            set {
+                status_switch.sensitive = value;
+                action_area.sensitive = value;
+            }
+        }
+
         public Access () {
             Object (activatable: true,
                     description: _("Limit computer use"),
                     icon_name: "preferences-system-privacy",
                     title: _("Access time"));
 
-            status_switch.notify["active"].connect (() => {
-                PAM.Token.switch_pam (status_switch.active);
-                content_area.sensitive = status_switch.active;
-                action_area.sensitive = status_switch.active;
-            });
-
             status_switch.active = PAM.Token.get_pam_state ();
-            content_area.sensitive = status_switch.active;
-            action_area.sensitive = status_switch.active;
+            status_switch.notify["active"].connect (() => {
+                Utils.run_cli ("--state=%s".printf (status_switch.active ? "on" : "off"));
+            });
 
             names_map = new Gee.HashMap<PAM.DayType, string> ();
             names_map[PAM.DayType.ALL] = _("All days");
@@ -50,7 +52,7 @@ namespace EBreakTime {
             var clear_button = new Gtk.Button.with_label (_("Clear limits"));
             clear_button.tooltip_text =_("All your limits will be deleted");
             clear_button.clicked.connect (() => {
-                PAM.Token.set_token_for_user (Posix.getlogin ());
+                Utils.run_cli ("--user=%s".printf (Posix.getlogin ()));
                 load_restrictions ();
             });
 
@@ -80,7 +82,8 @@ namespace EBreakTime {
                     new_restrictions += (entry.key + entry.value);
                     return true;
                 });
-                PAM.Token.set_token_for_user (Posix.getlogin (), new_restrictions);
+
+                Utils.run_cli ("--user=%s --timeline=%s".printf (Posix.getlogin (), string.joinv (Constants.LIST_SEPARATOR, new_restrictions)));
                 load_restrictions ();
             }
         }
