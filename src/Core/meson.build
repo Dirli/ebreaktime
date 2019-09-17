@@ -15,6 +15,7 @@ endif
 
 executable(
     meson.project_name() + 'd',
+    'AbstractManager.vala',
     'BreakManager.vala',
     'BreakWidget.vala',
     'Daemon.vala',
