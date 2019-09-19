@@ -34,7 +34,11 @@ namespace EBreakTime {
             var time_from = get_from ();
             var time_to = get_to ();
 
-            changed (day_type, time_from == time_to ? null : (time_from + "-" + time_to));
+            if (int.parse (time_from) >= int.parse (time_to)) {
+                return;
+            }
+
+            changed (day_type, time_from + "-" + time_to);
         }
 
         public void highlight_restriction () {
@@ -46,7 +50,15 @@ namespace EBreakTime {
         }
 
         public string get_to () {
-            return format_time_string (picker_to.time.get_hour ()) + format_time_string (picker_to.time.get_minute ());
+            int to_h = picker_to.time.get_hour ();
+            int to_m = picker_to.time.get_minute ();
+
+            if (to_h == 0 && to_m == 0) {
+                to_h = 23;
+                to_m = 59;
+            }
+
+            return format_time_string (to_h) + format_time_string (to_m);
         }
 
         public void set_from (string from) {
