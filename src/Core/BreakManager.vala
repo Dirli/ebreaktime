@@ -16,14 +16,14 @@
  *
  */
 
-namespace EBreakTime {
-    [DBus (name = "org.freedesktop.login1.Manager")]
-    interface ILogindManager : DBusProxy {
-        public abstract signal void prepare_for_sleep (bool start);
-    }
+[DBus (name = "org.freedesktop.login1.Manager")]
+interface ILogindManager : DBusProxy {
+    public abstract signal void prepare_for_sleep (bool start);
+}
 
-    public class Core.BreakManager : Object {
-        private int interval;
+namespace EBreakTime {
+
+    public class Core.BreakManager : Core.AbstractManager {
         private int counter;
         private int postpone;
 
@@ -50,12 +50,8 @@ namespace EBreakTime {
             get {return _timer_state;}
             set {
                 _timer_state = value;
-                interval = 60;
-
-                bump_timer (0);
 
                 if (value == "break") {
-                    interval = 1;
                     counter = 60 * break_time;
                 } else {
                     counter = postpone_flag ? postpone : work_time;
@@ -65,15 +61,14 @@ namespace EBreakTime {
                 if (counter < 1) {return;}
 
                 timer_handler ();
-                bump_timer (interval);
             }
         }
 
         private ILogindManager? logind_manager;
 
         public BreakManager (int work_time, int break_time) {
+            manager_name = "break";
             postpone = 3;
-            interval = 60;
 
             this.work_time = counter = work_time;
             this.break_time = break_time;
@@ -98,8 +93,9 @@ namespace EBreakTime {
             }
         }
 
-        public void init () {
+        public override bool init () {
             timer_state = "work";
+            return true;
         }
 
         private void emit_break_signal () {
@@ -107,11 +103,13 @@ namespace EBreakTime {
             run_break (run_break_state);
         }
 
-        public bool timer_handler () {
+        public override bool timer_handler () {
+            warning ("Break timer handler");
             if (counter == 0) {
+                warning ("Break timer handler change state");
                 emit_break_signal ();
                 timer_state = timer_state == "break" ? "work" : "break";
-                return false;
+                return true;
             }
 
             if (counter == 5 && timer_state == "work") {
