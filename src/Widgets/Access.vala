@@ -1,5 +1,7 @@
 namespace EBreakTime {
     public class Widgets.Access : Granite.SimpleSettingsPage {
+        public signal void pam_changed ();
+
         private Gee.HashMap<string, string> access_map;
         private Gee.HashMap<PAM.DayType, string> names_map;
         private Gtk.SizeGroup title_group;
@@ -20,6 +22,7 @@ namespace EBreakTime {
             status_switch.active = PAM.Token.get_pam_state ();
             status_switch.notify["active"].connect (() => {
                 Utils.run_cli ("--state=%s".printf (status_switch.active ? "on" : "off"));
+                pam_changed ();
             });
 
             names_map = new Gee.HashMap<PAM.DayType, string> ();
@@ -54,6 +57,7 @@ namespace EBreakTime {
             clear_button.clicked.connect (() => {
                 Utils.run_cli ("--user=%s".printf (Posix.getlogin ()));
                 load_restrictions ();
+                pam_changed ();
             });
 
             action_area.halign = Gtk.Align.CENTER;
@@ -85,6 +89,7 @@ namespace EBreakTime {
 
                 Utils.run_cli ("--user=%s --timeline=%s".printf (Posix.getlogin (), string.joinv (Constants.LIST_SEPARATOR, new_restrictions)));
                 load_restrictions ();
+                pam_changed ();
             }
         }
 
