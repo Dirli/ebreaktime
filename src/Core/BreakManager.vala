@@ -104,9 +104,7 @@ namespace EBreakTime {
         }
 
         public override bool timer_handler () {
-            warning ("Break timer handler");
             if (counter == 0) {
-                warning ("Break timer handler change state");
                 emit_break_signal ();
                 timer_state = timer_state == "break" ? "work" : "break";
                 return true;
