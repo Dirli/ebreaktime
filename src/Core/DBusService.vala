@@ -25,11 +25,17 @@ namespace EBreakTime.Core {
     [DBus (name = "io.elementary.EBreakTime")]
     public class DBusService : Object {
         public signal void changed_break (string new_val);
+        public signal void changed_access (bool state);
 
+        private AccessManager access_manager;
         private BreakManager break_manager;
         private TimerManager timer_manager;
         private BreakWidget? break_widget = null;
         private EBreakTime.SettingsManager settings;
+
+        private bool break_timer_state;
+
+        private Gee.HashMap<string, AbstractManager> managers_map;
 
         private static DBusService? instance = null;
         public static DBusService get_default () {
@@ -41,8 +47,11 @@ namespace EBreakTime.Core {
         }
 
         protected DBusService () {
+            break_timer_state = false;
             settings = EBreakTime.SettingsManager.get_default ();
             settings.set_boolean ("autostart", checked_autostart ());
+
+            managers_map = new Gee.HashMap<string, AbstractManager> ();
 
             timer_manager = TimerManager.get_default ();
             timer_manager.emit_time.connect (on_emit_time);
@@ -50,20 +59,50 @@ namespace EBreakTime.Core {
             break_manager = new BreakManager (settings.get_int ("worktime"), settings.get_int ("breaktime"));
             break_manager.changed_count.connect (on_changed_count);
             break_manager.run_break.connect (on_run_break);
-            break_manager.bump_timer.connect ((interval) => {
-                timer_manager.start_timer (interval);
+            if (settings.get_boolean ("break")) {
+                add_manager (break_manager);
+            }
+
+            access_manager = new AccessManager ();
+            access_manager.time_expired.connect (() => {
+                managers_map.foreach ((entry) => {
+                    if (entry.key != "access") {
+                        managers_map.unset (entry.key);
+                    }
+                    return true;
+                });
+
+                on_run_break (false);
+                changed_access (false);
             });
 
             init_settings_signals ();
 
-            if (settings.get_boolean ("break")) {
-                break_manager.init ();
+            if (PAM.Token.get_pam_state ()) {
+                add_manager (access_manager);
             }
         }
 
         private bool on_emit_time () {
-            break_manager.timer_handler ();
+            managers_map.foreach ((mng) => {
+                if (!break_timer_state || mng.value.manager_name == "break") {
+                    mng.value.timer_handler ();
+                }
+                return true;
+            });
             return true;
+        }
+
+        public bool get_access_state () throws GLib.DBusError, GLib.IOError {
+            return access_manager.access_state ();
+        }
+
+        public void reload_access () throws GLib.DBusError, GLib.IOError {
+            if (PAM.Token.get_pam_state ()) {
+                add_manager (access_manager);
+            } else {
+                delete_manager ("access");
+            }
         }
 
         public void break_manage (string? action = "") throws GLib.DBusError, GLib.IOError {
@@ -82,6 +121,33 @@ namespace EBreakTime.Core {
             }
         }
 
+        private void add_manager (AbstractManager manager) {
+            if (managers_map.has_key (manager.manager_name)) {
+                managers_map.unset (manager.manager_name);
+            }
+
+            if (manager.init ()) {
+                managers_map[manager.manager_name] = manager;
+
+                if (!timer_manager.get_state ()) {
+                    timer_manager.start_timer ();
+                }
+            }
+
+            if (managers_map.size == 0) {
+                timer_manager.start_timer (0);
+            }
+        }
+
+        private void delete_manager (string mng_name) {
+            if (managers_map.has_key (mng_name)) {
+                managers_map.unset (mng_name);
+                if (managers_map.size == 0) {
+                    timer_manager.start_timer (0);
+                }
+            }
+        }
+
         private void init_settings_signals () {
             settings.changed["autostart"].connect (on_changed_autostart);
             settings.changed["worktime"].connect(() => {
@@ -93,13 +159,45 @@ namespace EBreakTime.Core {
             });
             settings.changed["break"].connect (() => {
                 if (settings.get_boolean ("break")) {
-                    break_manager.init ();
+                    add_manager (break_manager);
                 } else {
-                    timer_manager.start_timer (0);
-                    // break_manager.stop_timer ();
+                    delete_manager ("break");
                     changed_break ("Off");
                 }
             });
+        }
+
+        private void on_changed_count (string new_val) {
+            if (break_manager.timer_state == "break") {
+                if (break_widget != null) {
+                    break_widget.set_break_state (new_val);
+                }
+            } else {
+                changed_break (new_val);
+            }
+        }
+
+        private void on_run_break (bool run_break) {
+            if (run_break) {
+                break_timer_state = true;
+                timer_manager.start_timer (1);
+
+                if (break_widget == null) {
+                    break_widget = new BreakWidget (settings.get_boolean ("postpone"));
+                    break_widget.postpone_break.connect(() => {
+                        break_manager.postpone_timer ();
+                    });
+                }
+            } else {
+                break_timer_state = false;
+                timer_manager.start_timer ();
+
+                if (break_widget != null) {
+                    break_widget.fade_out_and_remove ();
+                }
+
+                break_widget = null;
+            }
         }
 
         private void on_changed_autostart () {
@@ -125,33 +223,6 @@ namespace EBreakTime.Core {
                 if (checked_autostart ()) {
                     GLib.FileUtils.remove (dest_path);
                 }
-            }
-        }
-
-        private void on_changed_count (string new_val) {
-            if (break_manager.timer_state == "break") {
-                if (break_widget != null) {
-                    break_widget.set_break_state (new_val);
-                }
-            } else {
-                changed_break (new_val);
-            }
-        }
-
-        private void on_run_break (bool run_break) {
-            if (run_break) {
-                if (break_widget == null) {
-                    break_widget = new BreakWidget (settings.get_boolean ("postpone"));
-                    break_widget.postpone_break.connect(() => {
-                        break_manager.postpone_timer ();
-                    });
-                }
-            } else {
-                if (break_widget != null) {
-                    break_widget.fade_out_and_remove ();
-                }
-
-                break_widget = null;
             }
         }
 

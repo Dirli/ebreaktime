@@ -70,6 +70,20 @@ namespace EBreakTime {
                     break_widget.update_state (val);
                 });
 
+                break_time.changed_access.connect ((state) => {
+                    lock_button.sensitive = state;
+                });
+
+                lock_button.sensitive = break_time.get_access_state ();
+
+                access_widget.pam_changed.connect (() => {
+                    try {
+                        break_time.reload_access ();
+                    } catch (Error e) {
+                        warning (e.message);
+                    }
+                });
+
                 break_widget.manage_timeout.connect ((state) => {
                     try {
                         break_time.break_manage (state);

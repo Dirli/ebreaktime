@@ -20,6 +20,9 @@ namespace EBreakTime {
     [DBus (name = "io.elementary.EBreakTime")]
     interface EBreakTime : Object {
         public abstract void break_manage (string? msg) throws GLib.DBusError, GLib.IOError;
+        public abstract void reload_access () throws GLib.DBusError, GLib.IOError;
+        public abstract bool get_access_state () throws GLib.DBusError, GLib.IOError;
         public signal void changed_break (string new_val);
+        public signal void changed_access (bool a_state);
     }
 }

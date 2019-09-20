@@ -28,7 +28,7 @@ namespace EBreakTime {
             }
         }
 
-        public void start_timer (int interval) {
+        public void start_timer (int interval = 60) {
             stop_timer ();
 
             if (interval == 0) {
