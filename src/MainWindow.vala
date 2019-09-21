@@ -70,11 +70,11 @@ namespace EBreakTime {
                     break_widget.update_state (val);
                 });
 
-                break_time.changed_access.connect ((state) => {
-                    lock_button.sensitive = state;
+                break_time.changed_access.connect ((access_state) => {
+                    lock_button.sensitive = access_state;
                 });
 
-                lock_button.sensitive = break_time.get_access_state ();
+                lock_button.sensitive = !break_time.expired_time_state ();
 
                 access_widget.pam_changed.connect (() => {
                     try {

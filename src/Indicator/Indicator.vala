@@ -57,6 +57,8 @@ namespace EBreakTime {
                 try {
                     break_time = GLib.Bus.get_proxy_sync (BusType.SESSION, Constants.DBUS_NAME, Constants.DBUS_PATH);
                     break_time.changed_break.connect (on_changed_break);
+                    break_time.changed_access.connect (on_changed_access);
+                    break_time.changed_manager_state.connect (on_changed_manager_state);
                     if (main_widget != null) {
                         break_time.break_manage ("");
                     }
@@ -68,9 +70,25 @@ namespace EBreakTime {
             }
         }
 
+        private void on_changed_access (bool access_state) {
+            if (visible && main_widget != null) {
+                main_widget.timed_expired (!access_state);
+            }
+        }
+
         private void on_changed_break (string val) {
             if (visible && main_widget != null) {
                 main_widget.update_state (val);
+            }
+        }
+
+        private void on_changed_manager_state (string mng_name, bool mng_state) {
+            if (visible && main_widget != null) {
+                switch (mng_name) {
+                    case "access":
+                        main_widget.access_state_img (mng_state);
+                        break;
+                }
             }
         }
 
@@ -103,6 +121,7 @@ namespace EBreakTime {
                 });
 
                 try {
+                    main_widget.access_state_img (break_time.get_manager_state ("access"));
                     break_time.break_manage ("");
                 } catch (Error e) {
                     warning ("Error: %s\n", e.message);

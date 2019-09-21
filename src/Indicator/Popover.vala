@@ -23,10 +23,29 @@ namespace EBreakTime {
         public Gtk.ModelButton hide_button;
 
         private Gtk.Label breaktime_val;
+        private Gtk.Grid grid_btns;
+        private Gtk.Image access_icon;
 
         public Popover () {
             margin_top = 15;
             row_spacing = 10;
+
+            var access_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
+            var access_lbl = new Gtk.Label (_("Access tracking"));
+            access_lbl.expand = true;
+            access_lbl.halign = Gtk.Align.START;
+
+            access_icon = new Gtk.Image ();
+            access_lbl.margin_start = access_icon.margin_end = 15;
+
+            access_box.add (access_lbl);
+            access_box.add (access_icon);
+
+            var separator_head = new Wingpanel.Widgets.Separator ();
+            separator_head.hexpand = true;
+
+            attach (access_box, 0, 0, 2, 1);
+            attach (separator_head, 0, 1, 2, 1);
 
             var breaktime_lbl = new Gtk.Label (_("Before the break:"));
             breaktime_lbl.expand = true;
@@ -49,7 +68,7 @@ namespace EBreakTime {
                 manage_timeout ("run");
             });
 
-            var grid_btns = new Gtk.Grid ();
+            grid_btns = new Gtk.Grid ();
             grid_btns.margin_start = grid_btns.margin_end = 15;
             grid_btns.attach (break_run_button,   0, 0);
             grid_btns.attach (break_reset_button, 1, 0);
@@ -75,16 +94,40 @@ namespace EBreakTime {
                 }
             });
 
-            attach (breaktime_lbl,  0, 0);
-            attach (breaktime_val,  1, 0);
-            attach (grid_btns,      0, 1, 2, 1);
-            attach (separator_foot, 0, 2, 2, 1);
-            attach (hide_button,    0, 3, 2, 1);
-            attach (app_button,     0, 4, 2, 1);
+            attach (breaktime_lbl,  0, 2);
+            attach (breaktime_val,  1, 2);
+            attach (grid_btns,      0, 3, 2, 1);
+            attach (separator_foot, 0, 4, 2, 1);
+            attach (hide_button,    0, 5, 2, 1);
+            attach (app_button,     0, 6, 2, 1);
         }
 
         public void update_state (string min) {
             breaktime_val.label = min;
+        }
+
+        public void access_state_img (bool access_manager_state) {
+            access_icon.set_from_icon_name(access_manager_state ? "user-available" : "user-busy", Gtk.IconSize.MENU);
+        }
+
+        public void timed_expired (bool time_expired_state) {
+            if (time_expired_state) {
+                var exist_widget = get_child_at (0, 0);
+                if (exist_widget != null) {
+                    exist_widget.destroy ();
+                }
+
+                var time_up_lbl = new Gtk.Label (_("Your time is up"));
+                time_up_lbl.expand = true;
+                time_up_lbl.halign = Gtk.Align.CENTER;
+
+
+                breaktime_val.label = "Off";
+
+                attach (time_up_lbl,    0, 0, 2, 1);
+            }
+
+            grid_btns.sensitive = !time_expired_state;
         }
     }
 }
