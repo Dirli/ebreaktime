@@ -15,7 +15,7 @@ namespace EBreakTime {
 
         public Access () {
             Object (activatable: true,
-                    description: _("Limit computer use"),
+                    description: _("Here you can configure the periods in which the computer will be available to you. Time limits are checked a little, but if you really want, I think you can shoot yourself in the leg))"),
                     icon_name: "preferences-system-privacy",
                     title: _("Access time"));
 
@@ -101,34 +101,52 @@ namespace EBreakTime {
             }
         }
 
-        private void add_frame (Gtk.Box frame_box) {
+        private void add_frame (Gtk.Stack frames_stack) {
             var exist_widget = content_area.get_child_at (0, 0);
             if (exist_widget != null) {
                 exist_widget.destroy ();
             }
 
+            exist_widget = content_area.get_child_at (0, 1);
+            if (exist_widget != null) {
+                exist_widget.destroy ();
+            }
+
+            var stack_switcher = new Gtk.StackSwitcher ();
+            stack_switcher.halign = Gtk.Align.CENTER;
+            stack_switcher.homogeneous = true;
+            stack_switcher.margin_top = 12;
+            stack_switcher.stack = frames_stack;
+
             var frame = new Gtk.Frame (null);
             frame.get_style_context ().add_class (Gtk.STYLE_CLASS_VIEW);
-            frame.add (frame_box);
+            frame.add (frames_stack);
 
-            content_area.attach (frame, 0, 0);
+            content_area.attach (stack_switcher, 0, 0);
+            content_area.attach (frame, 0, 1);
             content_area.show_all ();
         }
 
-        private Gtk.Box create_frame_box () {
-            var frame_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
+        private Gtk.Stack create_frame_box () {
+            var periods_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
+            periods_box.valign = Gtk.Align.CENTER;
+            var days_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 
-            frame_box.add (get_iter_box (PAM.DayType.ALL));
-            frame_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
-            frame_box.add (get_iter_box (PAM.DayType.WEEKDAY));
-            frame_box.add (get_iter_box (PAM.DayType.WEEKEND));
-            frame_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
+            periods_box.add (get_iter_box (PAM.DayType.ALL));
+            periods_box.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
+            periods_box.add (get_iter_box (PAM.DayType.WEEKDAY));
+            periods_box.add (get_iter_box (PAM.DayType.WEEKEND));
 
             foreach (var day_type in PAM.DayType.get_days ()) {
-                frame_box.add (get_iter_box (day_type));
+                days_box.add (get_iter_box (day_type));
             }
 
-            return frame_box;
+            var frames_stack = new Gtk.Stack ();
+            frames_stack.expand = true;
+            frames_stack.add_titled (periods_box, "periods", _("Periods"));
+            frames_stack.add_titled (days_box, "days", _("Days"));
+
+            return frames_stack;
         }
 
         private WeekSpinBox get_iter_box (PAM.DayType day_type) {

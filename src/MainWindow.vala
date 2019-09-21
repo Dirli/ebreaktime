@@ -22,7 +22,7 @@ namespace EBreakTime {
 
         public MainWindow (EBreakTimeApp app) {
             set_application (app);
-            set_default_size (900, 450);
+            set_default_size (900, 650);
             window_position = Gtk.WindowPosition.CENTER;
 
             var settings = SettingsManager.get_default ();
