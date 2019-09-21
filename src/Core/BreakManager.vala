@@ -60,7 +60,7 @@ namespace EBreakTime {
 
                 if (counter < 1) {return;}
 
-                timer_handler ();
+                timer_handler (false);
             }
         }
 
@@ -103,7 +103,7 @@ namespace EBreakTime {
             run_break (run_break_state);
         }
 
-        public override bool timer_handler () {
+        public override bool timer_handler (bool idle) {
             if (counter == 0) {
                 emit_break_signal ();
                 timer_state = timer_state == "break" ? "work" : "break";
@@ -117,21 +117,11 @@ namespace EBreakTime {
             emit_changed_count ();
             --counter;
 
-            if (counter % 5 == 0 && timer_state == "work") {
-                var cur_idle = get_idle ();
-                if (cur_idle > 600000) {
-                    timer_state = "work";
-                }
+            if (idle && timer_state == "work") {
+                timer_state = "work";
             }
 
             return true;
-        }
-
-        public ulong get_idle () {
-            unowned X.Display x_display = Gdk.X11.get_default_xdisplay ();
-            var scrsaver = XScreenSaver.query_info (x_display, x_display.default_root_window ());
-
-            return scrsaver.idle;
         }
 
         public void emit_changed_count (int? inc = 0) {

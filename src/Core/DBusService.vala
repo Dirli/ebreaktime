@@ -34,6 +34,7 @@ namespace EBreakTime.Core {
         private EBreakTime.SettingsManager settings;
 
         private bool break_timer_state;
+        private int timer_counter;
 
         private Gee.HashMap<string, AbstractManager> managers_map;
 
@@ -55,6 +56,8 @@ namespace EBreakTime.Core {
 
             timer_manager = TimerManager.get_default ();
             timer_manager.emit_time.connect (on_emit_time);
+
+            timer_counter = 1;
 
             break_manager = new BreakManager (settings.get_int ("worktime"), settings.get_int ("breaktime"));
             break_manager.changed_count.connect (on_changed_count);
@@ -84,12 +87,20 @@ namespace EBreakTime.Core {
         }
 
         private bool on_emit_time () {
+            bool idle = false;
+            if (!break_timer_state && timer_counter++ == 5) {
+                if (Core.Utils.get_idle () > 600000) {
+                    idle = true;
+                }
+                timer_counter = 1;
+            }
             managers_map.foreach ((mng) => {
                 if (!break_timer_state || mng.value.manager_name == "break") {
-                    mng.value.timer_handler ();
+                    mng.value.timer_handler (idle);
                 }
                 return true;
             });
+
             return true;
         }
 
@@ -191,6 +202,7 @@ namespace EBreakTime.Core {
             } else {
                 break_timer_state = false;
                 timer_manager.start_timer ();
+                timer_counter = 1;
 
                 if (break_widget != null) {
                     break_widget.fade_out_and_remove ();

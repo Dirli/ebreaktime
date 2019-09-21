@@ -87,10 +87,12 @@ namespace EBreakTime {
             return time_info;
         }
 
-        public override bool timer_handler () {
+        public override bool timer_handler (bool idle) {
             if (!t_expired) {
-                t_expired = true;
                 var timer_dt = new DateTime.now_local();
+                if (timer_dt.get_hour () == 23 && timer_dt.get_minute () == 59) {
+                    return true;
+                }
 
                 if (current_day != timer_dt.get_day_of_week ()) {
                     current_day = timer_dt.get_day_of_week ();
@@ -100,6 +102,7 @@ namespace EBreakTime {
                 }
 
                 var timer_dt_unix = timer_dt.to_unix ();
+                t_expired = true;
                 foreach (TimeInfo times in time_access) {
                     if (timer_dt_unix > times.from && times.to > timer_dt_unix) {
                         t_expired = false;

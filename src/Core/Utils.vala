@@ -35,5 +35,12 @@ namespace EBreakTime.Core {
             }
 #endif
         }
+
+        public static ulong get_idle () {
+            unowned X.Display x_display = Gdk.X11.get_default_xdisplay ();
+            var scrsaver = XScreenSaver.query_info (x_display, x_display.default_root_window ());
+
+            return scrsaver.idle;
+        }
     }
 }
