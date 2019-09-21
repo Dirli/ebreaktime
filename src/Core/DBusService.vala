@@ -26,6 +26,7 @@ namespace EBreakTime.Core {
     public class DBusService : Object {
         public signal void changed_break (string new_val);
         public signal void changed_access (bool state);
+        public signal void changed_manager_state (string name, bool state);
 
         private AccessManager access_manager;
         private BreakManager break_manager;
@@ -104,8 +105,12 @@ namespace EBreakTime.Core {
             return true;
         }
 
-        public bool get_access_state () throws GLib.DBusError, GLib.IOError {
-            return access_manager.access_state ();
+        public bool get_manager_state (string mng_name) throws GLib.DBusError, GLib.IOError {
+            return managers_map.has_key (mng_name);
+        }
+
+        public bool expired_time_state () throws GLib.DBusError, GLib.IOError {
+            return access_manager.time_expired_state ();
         }
 
         public void reload_access () throws GLib.DBusError, GLib.IOError {
@@ -133,28 +138,23 @@ namespace EBreakTime.Core {
         }
 
         private void add_manager (AbstractManager manager) {
-            if (managers_map.has_key (manager.manager_name)) {
-                managers_map.unset (manager.manager_name);
-            }
+            delete_manager (manager.manager_name);
 
             if (manager.init ()) {
                 managers_map[manager.manager_name] = manager;
-
+                changed_manager_state (manager.manager_name, true);
                 if (!timer_manager.get_state ()) {
                     timer_manager.start_timer ();
                 }
-            }
-
-            if (managers_map.size == 0) {
-                timer_manager.start_timer (0);
             }
         }
 
         private void delete_manager (string mng_name) {
             if (managers_map.has_key (mng_name)) {
                 managers_map.unset (mng_name);
+                changed_manager_state (mng_name, false);
                 if (managers_map.size == 0) {
-                    timer_manager.start_timer (0);
+                    timer_manager.stop_timer ();
                 }
             }
         }

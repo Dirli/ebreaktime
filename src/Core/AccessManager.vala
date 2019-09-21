@@ -28,8 +28,8 @@ namespace EBreakTime {
             t_expired = false;
         }
 
-        public bool access_state () {
-            return !t_expired;
+        public bool time_expired_state () {
+            return t_expired;
         }
 
         public override bool init () {
@@ -111,7 +111,8 @@ namespace EBreakTime {
                 }
 
                 if (t_expired) {
-                    Core.Utils.show_notify (_("Expired time to work. 5 minutes before the logout"));
+                    Core.Utils.show_notify (_("Your time is up. The session will close in a few minutes. We recommend that you save and close open applications."),
+                                            _("Time is over"));
                     time_expired ();
                 }
             } else {
