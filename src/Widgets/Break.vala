@@ -24,14 +24,13 @@ namespace EBreakTime {
 
         public Break (SettingsManager settings) {
             Object (activatable: true,
-                    description: _("Break time description"),
+                    description: _("Will ensure that you take a timely break."),
                     icon_name: "preferences-system-time",
                     title: _("Break time"));
 
             status_switch.notify["active"].connect (() => {
                 content_area.sensitive = status_switch.active;
             });
-            // status_switch.active = settings.get_boolean ("break");
 
             var breaktime_lbl = new Gtk.Label (_("Before the break:"));
             breaktime_lbl.halign = Gtk.Align.END;

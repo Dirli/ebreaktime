@@ -7,33 +7,45 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ebreaktime\n"
-"POT-Creation-Date: 2019-05-13 02:22+0300\n"
-"PO-Revision-Date: 2019-05-13 02:22+0300\n"
+"POT-Creation-Date: 2019-09-22 16:04+0300\n"
+"PO-Revision-Date: 2019-09-22 16:24+0300\n"
 "Last-Translator: Dirli <litandrej85@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-Poedit-Basepath: ../src\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Common/Utils.vala:24 Core/BreakWidget.vala:63
-msgid "Time break"
-msgstr "Перерыв"
+#: Core/AccessManager.vala:114
+msgid ""
+"Your time is up. The session will close in a few minutes. We recommend that "
+"you save and close open applications."
+msgstr ""
+"Ваше время вышло. Сессия бдует закрыта через несколько минут. Рекомендуется "
+"сохранить и закрыть открытые приложения."
 
-#: Core/BreakManager.vala:131
+#: Core/AccessManager.vala:115
+msgid "Time is over"
+msgstr "Время вышло"
+
+#: Core/BreakManager.vala:114
 msgid "5 minutes before the break"
 msgstr "5 минут до перерыва"
 
-#: Core/BreakManager.vala:161
+#: Core/BreakManager.vala:133
 msgid "min"
 msgstr "мин"
 
-#: Core/BreakWidget.vala:72 Widgets/Break.vala:81
+#: Core/BreakWidget.vala:63 Core/Utils.vala:24
+msgid "Time break"
+msgstr "Перерыв"
+
+#: Core/BreakWidget.vala:72
 msgid "Postpone"
 msgstr "Отложить"
 
@@ -41,51 +53,145 @@ msgstr "Отложить"
 msgid "Manage time break from the panel."
 msgstr "Управление перерывом с панели."
 
-#: Indicator/Popover.vala:31 Widgets/Break.vala:27
+#: Indicator/Popover.vala:34
+msgid "Access tracking"
+msgstr "Слежение за доступом"
+
+#: Indicator/Popover.vala:50 Widgets/Break.vala:35
 msgid "Before the break:"
 msgstr "До перерыва:"
 
-#: Indicator/Popover.vala:38 Widgets/Break.vala:45
+#: Indicator/Popover.vala:57
 msgid "Reset"
 msgstr "Сбросить"
 
-#: Indicator/Popover.vala:40 Widgets/Break.vala:47
+#: Indicator/Popover.vala:59 Widgets/Break.vala:73
 msgid "Reset timer"
 msgstr "Сбросить таймер"
 
-#: Indicator/Popover.vala:45 Widgets/Break.vala:52
+#: Indicator/Popover.vala:64
 msgid "Run"
 msgstr "Запустить"
 
-#: Indicator/Popover.vala:47 Widgets/Break.vala:54
+#: Indicator/Popover.vala:66 Widgets/Break.vala:78
 msgid "Start a break"
 msgstr "Запустить перерыв"
 
-#: Indicator/Popover.vala:61
+#: Indicator/Popover.vala:80
 msgid "Hide indicator"
 msgstr "Скрыть индикатор"
 
-#: Indicator/Popover.vala:64
+#: Indicator/Popover.vala:83
 msgid "Start EBreakTime"
 msgstr "Запустить EBreakTime"
 
-#: Widgets/Break.vala:38
-msgid "Break"
+#: Indicator/Popover.vala:120
+msgid "Your time is up"
+msgstr "Ваше время истекло"
+
+#: MainWindow.vala:54
+msgid "Some settings require administrator rights to be changed"
+msgstr "Некоторые настройки требуют прав администратора для изменения"
+
+#: MainWindow.vala:64 MainWindow.vala:100 Widgets/Access.vala:20
+msgid "Access time"
+msgstr "Время доступа"
+
+#: MainWindow.vala:65 MainWindow.vala:101 Widgets/Break.vala:29
+msgid "Break time"
 msgstr "Перерыв"
 
-#: Widgets/Break.vala:63
-msgid "Time to:"
-msgstr "Время:"
+#: Widgets/Access.vala:18
+msgid ""
+"Here you can configure the periods in which the computer will be available "
+"to you. Time limits are checked a little, but if you really want, I think "
+"you can shoot yourself in the leg))"
+msgstr ""
+"Здесь вы можете настроить периоды, в течение которых компьютер будет "
+"доступен для вас. Интервалы проверяются, но если очень хочется, думаю, вы "
+"сможете выстрелить себе в ногу))"
 
-#: Widgets/Break.vala:67
-msgid "break (m.):"
-msgstr "перерыва (м.):"
+#: Widgets/Access.vala:29
+msgid "All days"
+msgstr "Все дни"
 
-#: Widgets/Break.vala:74
-msgid "work (m.):"
-msgstr "работы (м.):"
+#: Widgets/Access.vala:30
+msgid "Weekdays"
+msgstr "Будни"
 
-#: Widgets/Break.vala:87
+#: Widgets/Access.vala:31
+msgid "Weekends"
+msgstr "Выходные"
+
+#: Widgets/Access.vala:32
+msgid "Monday"
+msgstr "Понедельник"
+
+#: Widgets/Access.vala:33
+msgid "Tuesday"
+msgstr "Вторник"
+
+#: Widgets/Access.vala:34
+msgid "Wednesday"
+msgstr "Среда"
+
+#: Widgets/Access.vala:35
+msgid "Thursday"
+msgstr "Четверг"
+
+#: Widgets/Access.vala:36
+msgid "Friday"
+msgstr "Пятница"
+
+#: Widgets/Access.vala:37
+msgid "Saturday"
+msgstr "Суббота"
+
+#: Widgets/Access.vala:38
+msgid "Sunday"
+msgstr "Воскресенье"
+
+#: Widgets/Access.vala:48
+msgid "Update limits"
+msgstr "Обновить лимиты"
+
+#: Widgets/Access.vala:51
+msgid "Restore limits"
+msgstr "Восстановить лимиты"
+
+#: Widgets/Access.vala:52
+msgid "All unsaved changes will be discarded"
+msgstr "Все несохраненные изменения будут отклонены"
+
+#: Widgets/Access.vala:55
+msgid "Clear limits"
+msgstr "Очистить лимиты"
+
+#: Widgets/Access.vala:56
+msgid "All your limits will be deleted"
+msgstr "Все ваши лимиты будут удалены"
+
+#: Widgets/Access.vala:146
+msgid "Periods"
+msgstr "Периоды"
+
+#: Widgets/Access.vala:147
+msgid "Days"
+msgstr "Дни"
+
+#: Widgets/Break.vala:27
+msgid "Will ensure that you take a timely break."
+msgstr "Будет следить за тем, что бы вы делали своевременный перерыв."
+
+#: Widgets/Break.vala:39
+msgid "Break time (m.):"
+msgstr "Время перерыва (м.):"
+
+#: Widgets/Break.vala:45
+msgid "Work time (m.):"
+msgstr "Время работы (м.):"
+
+#: Widgets/Break.vala:51
 msgid "Allow to postpone the break"
 msgstr "Разрешить откладывать перерыв"
 
@@ -96,6 +202,14 @@ msgstr "Автозапуск"
 #: Widgets/Settings.vala:35
 msgid "Indicator"
 msgstr "Индикатор"
+
+#: Widgets/WeekSpinBox.vala:27
+msgid "From:"
+msgstr "С "
+
+#: Widgets/WeekSpinBox.vala:29
+msgid "To:"
+msgstr "До"
 
 #~ msgid "Time to break:"
 #~ msgstr "Время до перерыва"
