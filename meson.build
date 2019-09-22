@@ -1,7 +1,7 @@
 project(
     'io.elementary.ebreaktime',
     'vala', 'c',
-    version: '1.0.2'
+    version: '1.9.0'
 )
 
 gnome = import('gnome')
